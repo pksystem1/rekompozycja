@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dziennik treningowy</title>
+<meta name="description" content="Prosty dziennik treningowy na telefon: plan A/B, zapis serii, wykresy i frekwencja. Dane zostają na Twoim urządzeniu.">
+<meta name="theme-color" content="#F2F3F5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1214" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Trening">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="status" class="status" role="status" aria-live="polite"></div>
+<main id="view" class="wrap"></main>
+<nav class="tabbar" role="tablist" aria-label="Główna nawigacja">
+  <button role="tab" data-act="tab" data-v="train" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>Trening</button>
+  <button role="tab" data-act="tab" data-v="hist" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historia</button>
+  <button role="tab" data-act="tab" data-v="charts" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16M8 15l4-4 3 3 5-6"/></svg>Wykresy</button>
+  <button role="tab" data-act="tab" data-v="more" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg>Więcej</button>
+</nav>
+<div id="sheet" class="overlay" hidden></div>
+<div id="pick" class="overlay overlay2" hidden></div>
+<div id="sum" class="overlay" hidden></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<noscript><p style="padding:20px">Ta aplikacja wymaga włączonego JavaScriptu.</p></noscript>
+<script src="plan.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,11 +1,11 @@
 # Dziennik treningowy
 
-Prosta aplikacja na telefon do zapisywania treningów siłowych. Ćwiczenia wybierasz swobodnie z biblioteki (ponad 160 pozycji) albo korzystasz z gotowych szablonów A i B.
+Prosta aplikacja na telefon do zapisywania treningów siłowych. Ćwiczenia wybierasz swobodnie z biblioteki (ponad 200 pozycji, w tym 68 na maszynach i suwnicach) albo korzystasz z gotowych szablonów A i B.
 Działa w przeglądarce, bez konta i bez serwera. **Wszystkie dane zostają na Twoim urządzeniu.**
 
 ## Co potrafi
 
-- **Biblioteka ćwiczeń.** Na ekranie Trening dodajesz ćwiczenia do listy na dany dzień (przycisk Dodaj ćwiczenie). Biblioteka ma wyszukiwarkę (działa też bez polskich znaków i po angielskich nazwach, np. „hip thrust”), filtry według partii mięśniowej i sprzętu, ulubione (★) i listę ostatnio robionych. Obejmuje klatkę, plecy, barki, biceps, triceps, nogi, pośladki, łydki, core oraz mobilność bioder, barków i klatki piersiowej.
+- **Biblioteka ćwiczeń.** Na ekranie Trening dodajesz ćwiczenia do listy na dany dzień (przycisk Dodaj ćwiczenie). Biblioteka ma wyszukiwarkę (działa też bez polskich znaków i po angielskich nazwach, np. „hip thrust”), filtry według partii mięśniowej i sprzętu, ulubione (★) i listę ostatnio robionych. Obejmuje klatkę, plecy, barki, biceps, triceps, nogi, pośladki, przywodziciele, łydki, core, mobilność bioder, barków i klatki piersiowej oraz cardio na maszynach (bieżnia, rowery, orbitrek, wioślarz, stepper, SkiErg). Każde ćwiczenie ma nazwę polską i angielską, bo na maszynach opisy są zwykle po angielsku. Szukać możesz w obu językach.
 - **Własne ćwiczenia.** Brakuje czegoś? W bibliotece wybierz „Dodaj własne ćwiczenie”: nazwa, partia, sprzęt i sposób zapisu serii (z ciężarem, z masą ciała, same powtórzenia albo czas).
 - **Trening.** Ćwiczenia wykonujesz w dowolnej kolejności. Serie wpisujesz przyciskami − / + lub z klawiatury, a ciężar i powtórzenia podpowiadają się z poprzedniego treningu. Po każdej serii rusza stoper przerwy. Przycisk „Zakończ” pokazuje podsumowanie dnia z porównaniem do poprzedniego razu.
 - **Zamiana ćwiczenia w trakcie.** W oknie ćwiczenia przycisk „Zamień na inne ćwiczenie” otwiera bibliotekę. Ćwiczenie bez zapisanych serii zostaje podmienione, a to z seriami zostaje w historii dnia.
@@ -74,6 +74,7 @@ Format danych (`trening.v1`) jest zgodny wstecz: nowe wersje czytają stare dane
 
 ## Historia wersji
 
+- **2.1.0** – 44 nowe ćwiczenia: maszyny (m.in. iso-lateral Hammer Strength, pendulum squat, hip adduction, glute kickback, GHD, maszyny z suwnicą Smitha), wyciągi i cardio na maszynach (czas w minutach). Angielskie nazwy wszystkich ćwiczeń i wyszukiwanie po nich. Nowe grupy: Przywodziciele i Cardio.
 - **2.0.0** – biblioteka ćwiczeń (164 pozycje) z wyszukiwarką, filtrami, ulubionymi i własnymi ćwiczeniami, swobodna lista ćwiczeń na dzień, plan A/B jako szablony, wykresy dla każdego ćwiczenia z historią, nowa kolumna „grupa” w eksporcie CSV. Dane z wersji 1.x działają bez zmian.
 - **1.1.0** – płaska ławka jest zamiennikiem wyciskania na skosie (trening A), rotacja ćwiczeń co tydzień, rotacja zapisywana w kopii zapasowej. Dawny wybór „płaska ławka zamiast pompek” przenosi się automatycznie na miejsce skosu.
 - **1.0.0** – pierwsza wersja.
@@ -112,7 +113,7 @@ Pojedyncze ćwiczenie dodasz w samej aplikacji (Dodaj własne ćwiczenie). Na st
 X("moj_id","Nazwa ćwiczenia","chest,triceps","db","M","Wskazówka techniczna","aliasy do wyszukiwania",{side:true})
 ```
 
-Grupy: `chest, back, shoulders, biceps, triceps, quads, hams, glutes, calves, core, mobility` (pierwsza jest główną). Sprzęt: `bw, db, bb, ma, ca, ot`. Typ (`C, M, I, L, B, T, H, N`) ustawia domyślne serie i zakres powtórzeń, opis typów jest na górze pliku. Ostatni argument jest opcjonalny.
+Grupy: `chest, back, shoulders, biceps, triceps, quads, hams, glutes, adductors, calves, core, mobility, cardio` (pierwsza jest główną). Sprzęt: `bw, db, bb, ma, ca, ot`. Typ (`C, M, I, L, B, T, H, N, K`) ustawia domyślne serie i zakres powtórzeń, opis typów jest na górze pliku. Ostatni argument jest opcjonalny. Nazwę angielską dopisz w tabeli `EN` na dole pliku.
 
 ### Własne zamienniki w szablonie
 

@@ -3,7 +3,7 @@
    Dziennik treningowy: samodzielna aplikacja (bez serwera, bez konta)
    Dane trzymane lokalnie w przeglądarce (localStorage).
    ============================================================ */
-const APP_VERSION="2.0.0";
+const APP_VERSION="2.1.0";
 const KEY="trening.v1";
 
 /* ---------- pomocnicze ---------- */
@@ -40,11 +40,11 @@ function load(){
 }
 /* własne ćwiczenia: zapisane w DB.custom, rejestrowane w EX tak jak ćwiczenia z biblioteki */
 function regCustom(id,c){
-  const K={w:{sets:3,lo:8,hi:12,rest:90},bw:{sets:3,lo:8,hi:15,rest:75,bw:true},nw:{sets:2,lo:8,hi:15,rest:30,nw:true},sec:{sets:2,lo:20,hi:60,rest:45,unit:"sec"}}[c.kind]||{sets:3,lo:8,hi:12,rest:90};
+  const K={w:{sets:3,lo:8,hi:12,rest:90},bw:{sets:3,lo:8,hi:15,rest:75,bw:true},nw:{sets:2,lo:8,hi:15,rest:30,nw:true},sec:{sets:2,lo:20,hi:60,rest:45,unit:"sec"},min:{sets:1,lo:10,hi:30,rest:0,unit:"min",nw:true}}[c.kind]||{sets:3,lo:8,hi:12,rest:90};
   EX[id]={id:id,slot:null,w:null,name:c.name,cue:"Własne ćwiczenie.",note:"",sets:K.sets,lo:K.lo,hi:K.hi,rest:K.rest,bw:!!K.bw,side:!!c.side,unit:K.unit||"reps",nw:!!K.nw,g:c.g,eq:c.eq,alias:"",lib:true,custom:true};
   if(!(id in ORDER))ORDER[id]=Object.keys(ORDER).length;
 }
-function validCustom(id,c){return /^c_[a-z0-9]{3,24}$/.test(id)&&c&&typeof c.name==="string"&&c.name.trim().length>=1&&c.name.length<=80&&Array.isArray(c.g)&&!!GMAP[c.g[0]]&&!!EMAP[c.eq]&&["w","bw","nw","sec"].includes(c.kind)}
+function validCustom(id,c){return /^c_[a-z0-9]{3,24}$/.test(id)&&c&&typeof c.name==="string"&&c.name.trim().length>=1&&c.name.length<=80&&Array.isArray(c.g)&&!!GMAP[c.g[0]]&&!!EMAP[c.eq]&&["w","bw","nw","sec","min"].includes(c.kind)}
 function registerCustoms(){
   Object.keys(DB.custom).forEach(id=>{
     const c=DB.custom[id];
@@ -80,7 +80,8 @@ const sumR=s=>s.reduce((a,x)=>a+x.r,0), maxK=s=>s.reduce((a,x)=>Math.max(a,x.k),
 function prevSession(id,date){const l=sessionsFor(id).filter(x=>x.date<date);return l[l.length-1]||null}
 const dayOf=()=>DB.days[S.date];
 const setsToday=id=>{const d=dayOf();return (d&&d.ex&&d.ex[id])||[]};
-const unitTxt=p=>p.unit==="sec"?" s":"";
+const timed=p=>p.unit==="sec"||p.unit==="min";
+const unitTxt=p=>p.unit==="sec"?" s":p.unit==="min"?" min":"";
 function setStr(sets,p){return sets.map(x=>x.r+unitTxt(p)+(x.k?" × "+nf(x.k)+" kg":"")).join(", ")}
 function dayTag(d){const ws=new Set(Object.keys(d.ex).filter(i=>EX[i]).map(i=>EX[i].w||"-"));if(ws.size===1){const w=[...ws][0];return w==="-"?"Wolny":w}return "Mix"}
 const firstT=(d,id)=>{const s=d.ex[id];return s&&s.length&&s[0].t?s[0].t:0};
@@ -97,7 +98,7 @@ function draftFor(id){
 function hintFor(p){
   const ps=prevSession(p.id,S.date);if(!ps)return "";
   if(ps.sets.length>=p.sets&&ps.sets.every(s=>s.r>=p.hi))
-    return p.unit==="sec"?"Ostatnio górny zakres we wszystkich seriach: wydłuż czas lub utrudnij wariant.":p.bw?"Ostatnio górny zakres we wszystkich seriach: czas dodać obciążenie.":"Ostatnio górny zakres we wszystkich seriach: dodaj ok. 2,5–5% ciężaru.";
+    return timed(p)?"Ostatnio górny zakres we wszystkich seriach: wydłuż czas lub utrudnij wariant.":p.bw?"Ostatnio górny zakres we wszystkich seriach: czas dodać obciążenie.":"Ostatnio górny zakres we wszystkich seriach: dodaj ok. 2,5–5% ciężaru.";
   return "";
 }
 function otherHistory(p){
@@ -122,7 +123,7 @@ function arrow(d,fmt){fmt=fmt||(x=>nf(x));if(d>0)return `<span class="up">▲ +$
 const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/ł/g,"l");
 const gName=id=>GMAP[id]?GMAP[id].name:"";
 const eqName=id=>EMAP[id]?EMAP[id].name:"";
-const hasKg=p=>!(p.unit==="sec"||p.nw);
+const hasKg=p=>!(timed(p)||p.nw);
 function ensureDay(date){const d=DB.days[date]||(DB.days[date]={date:date,ex:{}});if(!d.ex)d.ex={};return d}
 function listIds(date){
   const d=DB.days[date];if(!d)return [];
@@ -212,10 +213,10 @@ function chartOptions(){
 function exRow(id){
   const p=EX[id],ss=setsToday(id),prev=prevSession(id,S.date),n=Math.max(p.sets,ss.length);
   let dots="";for(let i=0;i<n;i++)dots+=`<span class="dot${i<ss.length?" on":""}"></span>`;
-  const tgt=`${p.sets} × ${p.lo}–${p.hi}${p.unit==="sec"?" s":""}${p.side?"/str.":""}`;
+  const tgt=`${p.sets} × ${p.lo}–${p.hi}${unitTxt(p)}${p.side?"/str.":""}`;
   const last=ss.length?setStr(ss,p):prev?"ostatnio "+setStr(prev.sets.slice(0,1),p):"";
   const rot=p.slot&&rotOf(p.slot)&&curId(p.slot)===id?EX[curIdAt(p.slot,nextWeekDate())]:null;
-  return `<button class="ex${ss.length>=p.sets?" done":""}" data-act="open" data-id="${id}"><span><b>${esc(p.name)}</b><small>${esc(gName(p.g[0]))} · ${tgt}${last?" · "+esc(last):""}</small>${rot?`<small>Rotacja, za tydzień: ${esc(rot.name)}</small>`:""}</span><span class="dots" aria-label="Wykonane serie: ${ss.length} z ${p.sets}">${dots}<span class="chev" aria-hidden="true">›</span></span></button>`;
+  return `<button class="ex${ss.length>=p.sets?" done":""}" data-act="open" data-id="${id}"><span><b>${esc(p.name)}</b>${p.en?`<small class="en">${esc(p.en)}</small>`:""}<small>${esc(gName(p.g[0]))} · ${tgt}${last?" · "+esc(last):""}</small>${rot?`<small>Rotacja, za tydzień: ${esc(rot.name)}</small>`:""}</span><span class="dots" aria-label="Wykonane serie: ${ss.length} z ${p.sets}">${dots}<span class="chev" aria-hidden="true">›</span></span></button>`;
 }
 function viewTrain(){
   const d=dayOf(),ds=dayHas(d),ids=listIds(S.date);
@@ -257,7 +258,7 @@ function viewCharts(){
   const p=EX[S.chartEx],ss=sessionsFor(p.id);
   let h=`<h1>Wykresy</h1><label class="lbl" for="chartEx">Ćwiczenie</label><select id="chartEx" class="pick">${groups.map(g=>`<optgroup label="${esc(g.label)}">${g.items.map(x=>`<option value="${x.id}"${x.id===p.id?" selected":""}>${esc(x.name)}</option>`).join("")}</optgroup>`).join("")}</select>`;
   const rp=ss.map(s=>({date:s.date,y:sumR(s.sets)})),kp=ss.map(s=>({date:s.date,y:maxK(s.sets)}));
-  const unit=p.unit==="sec"?"s":"powt.";
+  const unit=p.unit==="sec"?"s":p.unit==="min"?"min":"powt.";
   h+=`<h2>1. Zmiana powtórzeń</h2>`;
   if(!ss.length)h+=`<div class="empty">Brak zapisanych treningów tego ćwiczenia.</div>`;
   else{
@@ -268,7 +269,7 @@ function viewCharts(){
     h+=`<h2>2. Zmiana obciążenia</h2>`;
     const ka=kp[0].y,kb=kp[kp.length-1].y;
     h+=`<div class="card row between"><div><span class="lbl">Start</span><br><b style="font-size:22px">${nf(ka)} kg</b></div><div><span class="lbl">Teraz</span><br><b style="font-size:22px">${nf(kb)} kg</b></div><div style="text-align:right"><span class="lbl">Zmiana</span><br><b style="font-size:22px">${kp.length>1?arrow(kb-ka,x=>nf(x)+" kg"):"–"}</b></div></div>`;
-    if(!hasKg(p))h+=`<p class="muted small">${p.unit==="sec"?"Ćwiczenie na czas":"Ćwiczenie bez obciążenia"}: ciężar nie dotyczy.</p>`;
+    if(!hasKg(p))h+=`<p class="muted small">${timed(p)?"Ćwiczenie na czas":"Ćwiczenie bez obciążenia"}: ciężar nie dotyczy.</p>`;
     else{
       if(p.bw)h+=`<p class="muted small">Dla ćwiczeń z masą ciała ciężar to tylko dodatkowe obciążenie.</p>`;
       h+=`<div class="chartbox">${lineSVG(kp,"var(--red)","Maksymalny ciężar w kolejnych treningach")}</div>`;
@@ -345,9 +346,9 @@ function lockScroll(){document.documentElement.style.overflow=(S.open||S.pick||S
 function renderSheet(){
   const el=$("#sheet");
   if(!S.open){el.hidden=true;el.innerHTML="";lockScroll();return}
-  const p=EX[S.open],ss=setsToday(p.id),dr=draftFor(p.id),prev=prevSession(p.id,S.date),hint=hintFor(p),oh=otherHistory(p),sec=p.unit==="sec";
+  const p=EX[S.open],ss=setsToday(p.id),dr=draftFor(p.id),prev=prevSession(p.id,S.date),hint=hintFor(p),oh=otherHistory(p),sec=timed(p);
   let h=`<div class="topbar"><button class="back" data-act="close">‹ Lista</button><h3 style="flex:1;text-align:center;padding-right:60px">${esc(p.name)}</h3></div><div class="wrap" style="padding-top:12px">`;
-  h+=`<p class="muted small">${esc(p.g.map(gName).join(", "))} · ${esc(eqName(p.eq))}</p><p class="muted">Cel: ${p.sets} × ${p.lo}–${p.hi}${sec?" s":""}${p.side?" na stronę":""} · przerwa ${mmss(p.rest)}</p>`;
+  h+=`${p.en?`<p class="en">${esc(p.en)}</p>`:""}<p class="muted small">${esc(p.g.map(gName).join(", "))} · ${esc(eqName(p.eq))}</p><p class="muted">Cel: ${p.sets} × ${p.lo}–${p.hi}${unitTxt(p)}${p.side?" na stronę":""}${p.rest?" · przerwa "+mmss(p.rest):""}</p>`;
   h+=`<button class="swap" data-act="swap">⇄ Zamień na inne ćwiczenie<span class="muted small">z biblioteki</span></button>`;
   if(!ss.length&&listIds(S.date).includes(p.id))h+=`<button class="btn ghost sm" data-act="rmex" style="margin:0 0 8px">Usuń z listy na ten dzień</button>`;
   if(p.note)h+=`<div class="hint">Zamiennik: ${esc(p.note)}</div>`;
@@ -356,12 +357,12 @@ function renderSheet(){
   if(hint)h+=`<div class="hint good">${esc(hint)}</div>`;
   if(S.rest)h+=`<button class="pill rest-pill" data-act="clrrest" aria-label="Zatrzymaj stoper przerwy">Przerwa <span class="rest-t"></span></button>`;
   h+=`<div class="card"><h3>Seria ${ss.length+1}</h3>
-  <div class="lbl" style="margin-top:10px">${sec?"Sekundy":"Powtórzenia"}${p.side&&!sec?" (na stronę)":""}</div>
-  <div class="stepper"><button data-act="step" data-f="r" data-d="-1" aria-label="Mniej">−</button><input id="in-r" type="text" inputmode="numeric" pattern="[0-9]*" value="${dr.r}" aria-label="${sec?"Sekundy":"Powtórzenia"}"><button data-act="step" data-f="r" data-d="1" aria-label="Więcej">+</button></div>`;
+  <div class="lbl" style="margin-top:10px">${sec?(p.unit==="min"?"Minuty":"Sekundy"):"Powtórzenia"}${p.side&&!sec?" (na stronę)":""}</div>
+  <div class="stepper"><button data-act="step" data-f="r" data-d="-1" aria-label="Mniej">−</button><input id="in-r" type="text" inputmode="numeric" pattern="[0-9]*" value="${dr.r}" aria-label="${sec?(p.unit==="min"?"Minuty":"Sekundy"):"Powtórzenia"}"><button data-act="step" data-f="r" data-d="1" aria-label="Więcej">+</button></div>`;
   if(hasKg(p))h+=`<div class="lbl">${p.bw?"Dodatkowy ciężar (kg), 0 = masa ciała":"Ciężar (kg)"}</div>
   <div class="stepper"><button data-act="step" data-f="k" data-d="-1" aria-label="Mniej">−</button><input id="in-k" type="text" inputmode="decimal" value="${String(dr.k).replace(".",",")}" aria-label="Ciężar w kilogramach"><button data-act="step" data-f="k" data-d="1" aria-label="Więcej">+</button></div>`;
   h+=`<button class="btn green" data-act="save">Zapisz serię ${ss.length+1}</button></div>`;
-  if(ss.length)h+=`<div class="card"><h3>Zapisane tego dnia</h3>`+ss.map((x,i)=>`<div class="setrow"><span class="setno">${i+1}</span><span class="v">${x.r}${sec?" s":""}${x.k?" × "+nf(x.k)+" kg":""}</span><button class="xbtn" data-act="delset" data-i="${i}" aria-label="Usuń serię ${i+1}">${S.confirm==="set:"+p.id+":"+i?"Usunąć?":"✕"}</button></div>`).join("")+`</div>`;
+  if(ss.length)h+=`<div class="card"><h3>Zapisane tego dnia</h3>`+ss.map((x,i)=>`<div class="setrow"><span class="setno">${i+1}</span><span class="v">${x.r}${unitTxt(p)}${x.k?" × "+nf(x.k)+" kg":""}</span><button class="xbtn" data-act="delset" data-i="${i}" aria-label="Usuń serię ${i+1}">${S.confirm==="set:"+p.id+":"+i?"Usunąć?":"✕"}</button></div>`).join("")+`</div>`;
   h+=`<details class="cue card"><summary>Wskazówki techniczne</summary><p>${esc(p.cue)}</p></details>`;
   h+=`<button class="btn ghost" data-act="close">Gotowe, wróć do listy</button></div>`;
   el.innerHTML=h;el.hidden=false;lockScroll();
@@ -375,7 +376,7 @@ function renderPick(){
   <p class="muted">Miejsce w planie: <b>${esc(s.name)}</b> (trening ${s.w}). Wybrany zamiennik zastępuje je w szablonie treningu A lub B. Serie i przerwa zostają z planu, a zakres powtórzeń może się zmienić, jeśli ćwiczenie tego wymaga.</p>`;
   s.variants.forEach(v=>{
     const e=EX[v.id];
-    h+=`<button class="opt${v.id===cur?" on":""}" data-act="choose" data-id="${v.id}"><span class="optmain"><b>${esc(e.name)}</b>${v.id===s.id?'<span class="tag">domyślne</span>':""}${v.id===cur?'<span class="tag cur">wybrane</span>':""}</span><span class="small muted">${e.sets} × ${e.lo}–${e.hi}${e.unit==="sec"?" s":""}${e.side?"/str.":""}${e.bw?" · masa ciała":""}</span>${e.note?`<span class="small">${esc(e.note)}</span>`:`<span class="small">Ćwiczenie z domyślnego planu.</span>`}</button>`;
+    h+=`<button class="opt${v.id===cur?" on":""}" data-act="choose" data-id="${v.id}"><span class="optmain"><b>${esc(e.name)}</b>${v.id===s.id?'<span class="tag">domyślne</span>':""}${v.id===cur?'<span class="tag cur">wybrane</span>':""}</span>${e.en?`<span class="small en">${esc(e.en)}</span>`:""}<span class="small muted">${e.sets} × ${e.lo}–${e.hi}${unitTxt(e)}${e.side?"/str.":""}${e.bw?" · masa ciała":""}</span>${e.note?`<span class="small">${esc(e.note)}</span>`:`<span class="small">Ćwiczenie z domyślnego planu.</span>`}</button>`;
   });
   const rot=rotOf(s.id);
   if(rot){
@@ -397,11 +398,11 @@ function libList(){
   else if(L.g==="recent")ids=recentIds().filter(id=>EX[id]);
   else if(L.g!=="all")ids=ids.filter(id=>EX[id].g.includes(L.g));
   if(L.eq!=="all")ids=ids.filter(id=>EX[id].eq===L.eq);
-  if(toks.length)ids=ids.filter(id=>{const e=EX[id],hay=norm(e.name+" "+e.g.map(gName).join(" ")+" "+eqName(e.eq)+" "+(e.alias||""));return toks.every(t=>hay.includes(t))});
+  if(toks.length)ids=ids.filter(id=>{const e=EX[id],hay=norm(e.name+" "+e.g.map(gName).join(" ")+" "+eqName(e.eq)+" "+(e.alias||"")+" "+(e.en||""));return toks.every(t=>hay.includes(t))});
   if(L.g!=="recent"){
     const gi=id=>GROUPS.findIndex(g=>g.id===EX[id].g[0]);
     ids.sort((x,y)=>{
-      if(toks.length){const sx=norm(EX[x].name).startsWith(toks[0])?0:1,sy=norm(EX[y].name).startsWith(toks[0])?0:1;if(sx!==sy)return sx-sy}
+      if(toks.length){const st=id=>(norm(EX[id].name).startsWith(toks[0])||norm(EX[id].en||"").startsWith(toks[0]))?0:1,sx=st(x),sy=st(y);if(sx!==sy)return sx-sy}
       else if(L.g==="all"&&gi(x)!==gi(y))return gi(x)-gi(y);
       else if(L.g!=="all"&&L.g!=="fav"){const px=EX[x].g[0]===L.g?0:1,py=EX[y].g[0]===L.g?0:1;if(px!==py)return px-py}
       return EX[x].name.localeCompare(EX[y].name,"pl");
@@ -413,8 +414,8 @@ function libRowsHTML(r){
   if(!r.ids.length)return `<div class="empty"><p><b>Brak wyników</b></p><p class="small">Zmień filtr albo dodaj własne ćwiczenie poniżej.</p></div>`;
   return r.ids.map(id=>{
     const e=EX[id],fav=DB.fav.includes(id),on=r.inList.has(id);
-    const tgt=`${e.sets} × ${e.lo}–${e.hi}${e.unit==="sec"?" s":""}${e.side?"/str.":""}`;
-    return `<div class="lrow"><button class="lmain${on?" on":""}" data-act="libpick" data-id="${id}"><span class="optmain"><b>${esc(e.name)}</b>${on?'<span class="tag cur">na liście</span>':""}${e.custom?'<span class="tag">własne</span>':""}</span><span class="small muted">${esc(e.g.map(gName).join(", "))} · ${esc(eqName(e.eq))} · ${tgt}</span></button><button class="star" data-act="libfav" data-id="${id}" aria-pressed="${fav}" aria-label="${fav?"Usuń z ulubionych":"Dodaj do ulubionych"}">${fav?"★":"☆"}</button></div>`;
+    const tgt=`${e.sets} × ${e.lo}–${e.hi}${unitTxt(e)}${e.side?"/str.":""}`;
+    return `<div class="lrow"><button class="lmain${on?" on":""}" data-act="libpick" data-id="${id}"><span class="optmain"><b>${esc(e.name)}</b>${on?'<span class="tag cur">na liście</span>':""}${e.custom?'<span class="tag">własne</span>':""}</span>${e.en?`<span class="small en">${esc(e.en)}</span>`:""}<span class="small muted">${esc(e.g.map(gName).join(", "))} · ${esc(eqName(e.eq))} · ${tgt}</span></button><button class="star" data-act="libfav" data-id="${id}" aria-pressed="${fav}" aria-label="${fav?"Usuń z ulubionych":"Dodaj do ulubionych"}">${fav?"★":"☆"}</button></div>`;
   }).join("");
 }
 function libRefresh(){
@@ -436,7 +437,7 @@ function renderLib(){
     <label class="lbl" for="cName">Nazwa</label><input id="cName" class="field" type="text" maxlength="60" value="${esc(L.nameDraft||"")}" autocomplete="off" placeholder="np. Wyciskanie na maszynie Hammer">
     <label class="lbl" for="cGroup" style="display:block;margin-top:14px">Główna partia</label><select id="cGroup" class="field">${GROUPS.map(g=>`<option value="${g.id}">${esc(g.name)}</option>`).join("")}</select>
     <label class="lbl" for="cEq" style="display:block;margin-top:14px">Sprzęt</label><select id="cEq" class="field">${EQUIP.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join("")}</select>
-    <label class="lbl" for="cKind" style="display:block;margin-top:14px">Jak zapisujesz serie</label><select id="cKind" class="field"><option value="w">Powtórzenia i ciężar (kg)</option><option value="bw">Masa ciała, ciężar dodatkowy opcjonalnie</option><option value="nw">Same powtórzenia, bez ciężaru</option><option value="sec">Czas w sekundach</option></select>
+    <label class="lbl" for="cKind" style="display:block;margin-top:14px">Jak zapisujesz serie</label><select id="cKind" class="field"><option value="w">Powtórzenia i ciężar (kg)</option><option value="bw">Masa ciała, ciężar dodatkowy opcjonalnie</option><option value="nw">Same powtórzenia, bez ciężaru</option><option value="sec">Czas w sekundach</option><option value="min">Czas w minutach (np. cardio)</option></select>
     <label class="sw" style="margin-top:16px"><input type="checkbox" id="cSide"> <span>Ćwiczenie jednostronne (powtórzenia na każdą stronę)</span></label>
     <button class="btn" data-act="libsavecustom" style="margin-top:18px">Zapisz${L.mode==="replace"?" i zamień":" i dodaj do treningu"}</button>
     <button class="btn ghost" data-act="libformclose" style="margin-top:8px">Anuluj</button></div>`;
@@ -613,7 +614,7 @@ document.addEventListener("click",e=>{
     if(name.length<2){toast("Wpisz nazwę ćwiczenia");return}
     if(Object.keys(EX).some(i=>norm(EX[i].name)===norm(name))){toast("Ćwiczenie o takiej nazwie już istnieje");return}
     const kind=$("#cKind").value,id="c_"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
-    const c={name:name,g:[$("#cGroup").value],eq:$("#cEq").value,kind:["w","bw","nw","sec"].includes(kind)?kind:"w",side:$("#cSide").checked};
+    const c={name:name,g:[$("#cGroup").value],eq:$("#cEq").value,kind:["w","bw","nw","sec","min"].includes(kind)?kind:"w",side:$("#cSide").checked};
     if(!validCustom(id,c)){toast("Nie udało się zapisać ćwiczenia");return}
     DB.custom[id]=c;regCustom(id,c);
     if(S.lib.mode==="replace"){const from=S.lib.from;replaceInDay(from,id);delete S.draft[id];S.lib=null;S.open=id;renderAll();toast("Dodano własne ćwiczenie")}
@@ -645,7 +646,7 @@ document.addEventListener("click",e=>{
   }
   else if(a==="step"){
     const dr=draftFor(S.open),p=EX[S.open],f=b.dataset.f,dir=+b.dataset.d;
-    if(f==="r"){const st=p.unit==="sec"?5:1;dr.r=Math.max(0,Math.round(dr.r+dir*st));$("#in-r").value=dr.r}
+    if(f==="r"){const st=timed(p)?5:1;dr.r=Math.max(0,Math.round(dr.r+dir*st));$("#in-r").value=dr.r}
     else{dr.k=Math.max(0,Math.round((dr.k+dir*2.5)*10)/10);$("#in-k").value=String(dr.k).replace(".",",")}
   }
   else if(a==="save"){
@@ -653,7 +654,7 @@ document.addEventListener("click",e=>{
     if(!(dr.r>0)){toast("Podaj liczbę powtórzeń");return}
     const d=DB.days[S.date]||(DB.days[S.date]={date:S.date,ex:{}});
     (d.ex[p.id]=d.ex[p.id]||[]).push({r:dr.r,k:hasKg(p)?dr.k:0,t:Date.now()});
-    if(save()){persistRequest();S.rest={t0:Date.now(),id:p.id};S.confirm=null;renderAll();toast("Zapisano serię "+d.ex[p.id].length)}
+    if(save()){persistRequest();S.rest=p.rest>0?{t0:Date.now(),id:p.id}:null;S.confirm=null;renderAll();toast("Zapisano serię "+d.ex[p.id].length)}
   }
   else if(a==="delset"){
     const p=EX[S.open],i=+b.dataset.i,key="set:"+p.id+":"+i;

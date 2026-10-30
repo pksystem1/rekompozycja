@@ -13,6 +13,7 @@
     T = na czas, 2 × 20–40 s
     H = rozciąganie lub mobilność na czas, 2 × 30–60 s
     N = mobilność w powtórzeniach, bez ciężaru, 2 × 6–10
+    K = cardio na maszynie, jedna seria = czas w minutach, bez ciężaru
   Zakres powtórzeń to propozycja startowa, nie przepis. Zmienisz go, wpisując własne wartości przy serii.
   Ćwiczenia z planu A/B (plan.js) mają tu tylko metadane (META), ich parametry zostają w plan.js.
   Własne ćwiczenia dodajesz w aplikacji (Trening, Dodaj ćwiczenie, Dodaj własne ćwiczenie).
@@ -20,8 +21,8 @@
 const GROUPS=[
   {id:"chest",name:"Klatka"},{id:"back",name:"Plecy"},{id:"shoulders",name:"Barki"},
   {id:"biceps",name:"Biceps"},{id:"triceps",name:"Triceps"},
-  {id:"quads",name:"Czworogłowe"},{id:"hams",name:"Tył uda"},{id:"glutes",name:"Pośladki"},{id:"calves",name:"Łydki"},
-  {id:"core",name:"Brzuch i core"},{id:"mobility",name:"Mobilność"}
+  {id:"quads",name:"Czworogłowe"},{id:"hams",name:"Tył uda"},{id:"glutes",name:"Pośladki"},{id:"adductors",name:"Przywodziciele"},{id:"calves",name:"Łydki"},
+  {id:"core",name:"Brzuch i core"},{id:"mobility",name:"Mobilność"},{id:"cardio",name:"Cardio"}
 ];
 const EQUIP=[
   {id:"bw",name:"Masa ciała"},{id:"db",name:"Hantle"},{id:"bb",name:"Sztanga"},
@@ -38,7 +39,8 @@ const KIND={
   B:{sets:3,lo:8,hi:15,rest:75,bw:true},
   T:{sets:2,lo:20,hi:40,rest:45,unit:"sec"},
   H:{sets:2,lo:30,hi:60,rest:20,unit:"sec"},
-  N:{sets:2,lo:6,hi:10,rest:20,nw:true}
+  N:{sets:2,lo:6,hi:10,rest:20,nw:true},
+  K:{sets:1,lo:10,hi:30,rest:0,unit:"min",nw:true}
 };
 
 /* metadane ćwiczeń z planu A/B: [grupy, sprzęt, aliasy do wyszukiwania] */
@@ -67,10 +69,10 @@ const META={
   dipmachine:["triceps,chest","ma","dip maszyna"],
   dipassist:["triceps,chest","ma","dip asysta"],
   closepush:["triceps,chest","bw","pompki waskie"],
-  cossack:["quads,glutes,mobility","bw","cossack squat kozacki"],
-  cossacksupport:["quads,glutes,mobility","bw","kozacki z podparciem"],
-  latlunge:["quads,glutes,mobility","bw","wykrok boczny lateral lunge"],
-  sumogoblet:["quads,glutes,mobility","db","sumo squat"],
+  cossack:["quads,glutes,adductors,mobility","bw","cossack squat kozacki"],
+  cossacksupport:["quads,glutes,adductors,mobility","bw","kozacki z podparciem"],
+  latlunge:["quads,glutes,adductors,mobility","bw","wykrok boczny lateral lunge"],
+  sumogoblet:["quads,glutes,adductors,mobility","db","sumo squat"],
   facepull:["shoulders,back","ca","face pull"],
   revpec:["shoulders,back","ma","reverse fly odwrotne rozpietki"],
   revdb:["shoulders,back","db","reverse fly odwrotne rozpietki"],
@@ -113,7 +115,7 @@ const META={
   sideplank:["core","bw","side plank"],
   sideplankknee:["core","bw","side plank kolana"],
   sideplanklift:["core,glutes","bw","side plank unoszenie nogi"],
-  copenhagen:["core","bw","copenhagen plank przywodziciele"]
+  copenhagen:["core,adductors","bw","copenhagen plank przywodziciele"]
 };
 
 /* nowe ćwiczenia: X(id, nazwa, grupy, sprzęt, typ, podpowiedź, aliasy, nadpisania) */
@@ -227,13 +229,104 @@ X("catcow","Kot-wielbłąd","mobility,back","bw","N","W podporze klęku na zmian
 X("openbook","Rotacje klatki piersiowej w leżeniu bokiem (open book)","mobility,back","bw","N","Leżysz bokiem, kolana zgięte, otwieraj górną rękę za siebie, wzrok za ręką, biodra nieruchome.","thoracic rotation open book",{side:true,lo:6,hi:10});
 X("pigeon","Rozciąganie pośladków w pozycji gołębia","mobility,glutes","bw","H","Przednia noga zgięta przed ciałem, tułów pochylony, tylna noga wyciągnięta. Schodź tylko tak, by nie czuć bólu w kolanie.","pigeon pose golab",{side:true});
 X("lizard","Wykrok jaszczurki (lizard lunge)","mobility,glutes","bw","H","Głęboki wykrok, obie dłonie po wewnętrznej stronie przedniej stopy, biodra nisko, tylna noga prosta lub na kolanie.","lizard lunge",{side:true});
-X("adductrock","Kołysanie w rozkroku na kolanach","mobility","bw","N","Klęk podparty, jedna noga wyprostowana w bok, kołysz biodra do tyłu, plecy proste.","adductor rock przywodziciele",{side:true,lo:8,hi:12});
-X("frog","Żaba (rozciąganie przywodzicieli)","mobility","bw","H","Klęk w szerokim rozkroku, biodra do tyłu, ręce lub łokcie na podłodze, kolana wygodnie, plecy proste.","frog stretch przywodziciele zaba");
+X("adductrock","Kołysanie w rozkroku na kolanach","mobility,adductors","bw","N","Klęk podparty, jedna noga wyprostowana w bok, kołysz biodra do tyłu, plecy proste.","adductor rock przywodziciele",{side:true,lo:8,hi:12});
+X("frog","Żaba (rozciąganie przywodzicieli)","mobility,adductors","bw","H","Klęk w szerokim rozkroku, biodra do tyłu, ręce lub łokcie na podłodze, kolana wygodnie, plecy proste.","frog stretch przywodziciele zaba");
 X("anklemob","Mobilizacja stawu skokowego (kolano do ściany)","mobility","bw","N","Stopa kilka centymetrów od ściany, pięta na podłodze, dosuwaj kolano do ściany.","ankle dorsiflexion kostka",{side:true,lo:8,hi:12});
 X("hipcars","Kółka biodrem (CARs)","mobility","bw","N","Stojąc przy podparciu, unieś kolano, otwórz je na zewnątrz i wracaj dużym, powolnym kołem, bez ruchu miednicą.","hip cars krazenia biodra",{side:true,lo:3,hi:5});
 X("shoulderpass","Okrążenia ramion z kijem lub gumą","mobility,shoulders","ot","N","Szeroki chwyt, ramiona proste, przenoś kij nad głową za plecy tak daleko, jak pozwala komfort.","shoulder dislocates",{lo:8,hi:12});
 X("thoracicroll","Mobilizacja klatki piersiowej na rolce","mobility,back","ot","H","Rolka pod łopatkami, ręce za głową, odchylaj się nad rolką, przesuwaj się co kilka oddechów, bez wyginania lędźwi.","foam roller piersiowy",{lo:30,hi:60});
 X("hamstretch","Rozciąganie tyłu uda w leżeniu (z pasem lub gumą)","mobility,hams","ot","H","Leżysz na plecach, pas na stopie, noga prosta do góry, druga noga na podłodze, bez zaokrąglania lędźwi.","hamstring stretch tyl uda",{side:true});
+
+
+/* ---- MASZYNY, SUWNICE SMITHA, WYCIĄGI, CARDIO (nazwy angielskie w tabeli EN poniżej) ---- */
+X("declinepressm","Wyciskanie na maszynie skośnej w dół","chest,triceps","ma","M","Ustaw siedzisko tak, by uchwyty były na wysokości dolnej części klatki, łopatki oparte, wyciskaj bez blokowania łokci.","decline chest press");
+X("isochest","Wyciskanie na maszynie z niezależnymi ramionami (iso-lateral)","chest,triceps,shoulders","ma","M","Uchwyty na wysokości środka klatki, każde ramię pracuje osobno, więc wyrównujesz różnice między stronami. Łopatki oparte.","hammer strength iso lateral chest press");
+X("highrowm","Wiosłowanie na maszynie z góry (high row)","back,shoulders","ma","M","Klatka oparta, uchwyty wysoko, ciągnij łokcie w dół i do tyłu, łopatki ściągnięte na końcu.","high row machine");
+X("lowrowm","Wiosłowanie na maszynie z dołu (low row)","back,biceps","ma","M","Klatka oparta o poduszkę, ciągnij łokcie do tyłu wzdłuż tułowia, ściągnij łopatki, wracaj powoli.","low row machine");
+X("isorow","Wiosłowanie na maszynie z niezależnymi ramionami (iso-lateral row)","back,biceps","ma","M","Klatka oparta, każde ramię pracuje osobno, ciągnij łokieć do tyłu, łopatki ściągnięte.","hammer strength iso lateral row");
+X("latmachine","Ściąganie na maszynie (lat pulldown machine)","back,biceps","ma","M","Siedzisko z blokadą ud, ciągnij uchwyty w dół do górnej części klatki, łokcie w dół i do tyłu.","lat pulldown maszyna");
+X("pulloverm","Pullover na maszynie","back,chest","ma","I","Łokcie na poduszkach, ciągnij ramiona łukiem w dół do tułowia, bez wyginania lędźwi.","pullover machine");
+X("backextm","Wyprosty tułowia na maszynie (back extension)","back,glutes","ma","I","Plecy oparte, poruszaj się w komfortowym zakresie bez przeprostu. Przy bólu lędźwi zacznij od lekkiego ciężaru albo wybierz inne ćwiczenie.","lumbar extension machine prostowniki",{lo:10,hi:15});
+X("shrugm","Wzruszanie barkami na maszynie","back,shoulders","ma","I","Unoś barki prosto w górę, pauza 1 s na górze, bez rotacji.","shrug machine kaptury trapez");
+X("revhypm","Odwrócone wyprosty na maszynie (reverse hyper)","glutes,hams,back","ma","I","Brzuch na podkładce, unoś nogi do linii tułowia, bez bujania i bez przeprostu lędźwi.","reverse hyperextension");
+X("ghd","Wspięcia na maszynie GHD (glute-ham raise)","hams,glutes","ma","B","Stopy zablokowane, zginaj kolana i unoś tułów, ruch kontrolowany. Zacznij od kilku powtórzeń.","glute ham developer",{lo:5,hi:10});
+X("isoshoulder","Wyciskanie nad głowę na maszynie z niezależnymi ramionami","shoulders,triceps","ma","M","Plecy na oparciu, uchwyty na wysokości barków, wyciskaj w górę bez blokowania łokci.","iso lateral shoulder press hammer");
+X("smithohp","Wyciskanie nad głowę na suwnicy Smitha","shoulders,triceps","ma","M","Ławka z oparciem, sztanga startuje na wysokości brody, wyciskaj prosto w górę, brzuch napięty.","smith shoulder press");
+X("bicepsm","Uginanie ramion na maszynie","biceps","ma","I","Ramiona oparte na poduszce, pełny zakres, nie odrywaj ramion od poduszki.","biceps curl machine");
+X("tricepsm","Prostowanie ramion na maszynie","triceps","ma","I","Łokcie nieruchome, pełny wyprost, kontrolowany powrót.","triceps extension machine");
+X("legpresshoriz","Wypychanie na suwnicy poziomej (seated leg press)","quads,glutes","ma","M","Plecy i miednica oparte, stopy na szerokość barków, nie blokuj kolan na górze.","horizontal leg press",{rest:120});
+X("singlelegpress","Wypychanie na suwnicy jedną nogą","quads,glutes","ma","M","Jedna stopa na platformie, miednica oparta, kontroluj zejście, nie blokuj kolana.","single leg press",{side:true});
+X("pendulum","Przysiad wahadłowy (pendulum squat)","quads,glutes","ma","M","Plecy oparte, schodź głęboko w komfortowym zakresie, kolana w kierunku palców.","pendulum squat machine",{rest:120});
+X("vsquat","Przysiad na maszynie V-squat","quads,glutes","ma","M","Plecy oparte, stopy lekko przed ciałem, pełne zejście bez odrywania miednicy.","v squat machine",{rest:120});
+X("beltsquat","Przysiad z pasem (belt squat)","quads,glutes","ma","M","Obciążenie zawieszone na biodrach, tułów wyprostowany. Kręgosłup nie dźwiga obciążenia osiowo.","belt squat machine",{rest:120});
+X("standcurl","Uginanie nogi stojąc na maszynie","hams","ma","I","Biodra stabilne, zginaj nogę w kolanie, wracaj powoli, bez bujania.","standing leg curl",{side:true});
+X("hipadductm","Przywodzenie nóg na maszynie (hip adduction)","adductors","ma","L","Plecy oparte, zbliżaj uda do siebie powoli, bez szarpania, zakres dobierz do komfortu.","adduction machine inner thigh przywodziciele");
+X("glutekickm","Odwodzenie nogi w tył na maszynie (glute kickback)","glutes","ma","I","Klatka oparta, wypychaj nogę w tył siłą pośladka, bez wyginania lędźwi.","glute kickback machine",{side:true});
+X("hipthrustm","Hip thrust na maszynie (glute drive)","glutes,hams","ma","M","Plecy na oparciu, pas na biodrach, na górze miednica lekko podwinięta, żebra w dół.","hip thrust machine glute drive");
+X("donkeycalf","Wspięcia na palce w pochyleniu (donkey calf raise)","calves","ma","I","Pełne rozciągnięcie na dole, pauza 1–2 s na górze, bez odbijania.","donkey calf raise lydki");
+X("smithrow","Wiosłowanie na suwnicy Smitha","back,biceps","ma","M","Tułów ok. 45°, plecy neutralne, sztanga do pępka, łopatki ściągnięte. Obciąża lędźwia, przy bólach wybierz wiosłowanie z podparciem klatki.","smith row");
+X("smithhip","Hip thrust na suwnicy Smitha","glutes,hams","ma","M","Łopatki na ławce, stopy pod kolanami, na górze miednica lekko podwinięta, bez wyginania lędźwi.","smith hip thrust");
+X("smithlunge","Wykroki na suwnicy Smitha","quads,glutes","ma","M","Krok do przodu lub w tył względem sztangi, tułów wyprostowany, kolano przednie stabilne.","smith lunge",{side:true});
+X("smithrdl","Rumuński martwy ciąg na suwnicy Smitha","hams,glutes,back","ma","M","Biodra do tyłu, sztanga blisko nóg, plecy neutralne, schodź tylko do momentu zaokrąglania lędźwi.","smith romanian deadlift");
+X("pullthrough","Przeciąganie linki między nogami (pull-through)","glutes,hams","ca","M","Tyłem do wyciągu, biodra do tyłu z lekko ugiętymi kolanami, plecy neutralne, na górze zaciśnij pośladki.","cable pull through");
+X("cablechest","Wyciskanie na wyciągach stojąc","chest,triceps,shoulders","ca","M","Wykrok dla stabilności, uchwyty na wysokości klatki, wyciskaj do przodu, łopatki ściągnięte.","cable chest press");
+X("cableadd","Przywodzenie nogi na wyciągu","adductors","ca","L","Mankiet na kostce, stań bokiem do wyciągu, przyciągaj nogę przed ciałem, tułów stabilny.","cable hip adduction przywodziciele",{side:true});
+X("ropehammer","Uginanie młotkowe na wyciągu z liną","biceps","ca","I","Łokcie przy tułowiu, chwyt neutralny, bez bujania.","rope hammer curl");
+X("abcrunchm","Brzuszki na maszynie (ab crunch)","core","ma","I","Ruch z brzucha, podwijaj klatkę do miednicy, nie ciągnij uchwytami ramionami.","ab crunch machine");
+X("torsorot","Rotacja tułowia na maszynie","core","ma","I","Miednica stabilna, obracaj tułów, nie ramiona, kontroluj powrót.","rotary torso machine",{side:true,lo:10,hi:15});
+X("captain","Unoszenie nóg na krzesełku rzymskim (captain's chair)","core","ma","B","Plecy i przedramiona oparte, unoś kolana lub proste nogi, na górze podwiń miednicę, bez bujania.","captains chair leg raise roman chair",{lo:8,hi:15});
+X("treadmill","Bieżnia","cardio","ma","K","Zacznij od kilku minut spokojnego marszu. Tempo, w którym możesz mówić pełnymi zdaniami, to łagodna intensywność.","treadmill bieznia");
+X("bikeup","Rower stacjonarny","cardio","ma","K","Siodełko na wysokości bioder, kolana lekko ugięte na dole obrotu, na początek spokojne tempo.","stationary bike spinning");
+X("bikerec","Rower poziomy","cardio","ma","K","Plecy oparte, siodełko tak, by kolano było lekko ugięte na końcu wyprostu.","recumbent bike");
+X("airbike","Rower powietrzny (air bike)","cardio","ma","K","Pracujesz rękami i nogami, opór rośnie z tempem. Zacznij od spokojnego tempa, potem możesz robić interwały.","assault bike air bike");
+X("elliptical","Orbitrek","cardio","ma","K","Tułów wyprostowany, nie opieraj ciężaru na uchwytach, stopy płasko na pedałach.","elliptical cross trainer orbitrek");
+X("rowerg","Wioślarz","cardio","ma","K","Kolejność ruchu: nogi, tułów, ręce, potem w odwrotnej kolejności. Plecy neutralne, nie ciągnij samymi rękami.","rowing machine ergometr concept2");
+X("stairs","Stepper schodowy","cardio","ma","K","Tułów wyprostowany, trzymaj poręcze tylko dla równowagi, stopy płasko na stopniach.","stair climber stairmaster stepper");
+X("skierg","SkiErg","cardio","ma","K","Ruch z bioder i tułowia, ręce prowadzą uchwyty w dół, plecy neutralne.","ski erg concept2");
+
+/* ---- nazwy angielskie (tak ćwiczenia są opisane na maszynach i w większości siłowni) ---- */
+const EN={
+  squat:"Goblet Squat",legpress:"Leg Press (45°)",hacksquat:"Hack Squat (Machine)",smithsquat:"Smith Machine Squat",dbsquat:"Dumbbell Squat (Held at Shoulders)",
+  incline:"Incline Dumbbell Press (30°)",incmachine:"Incline Chest Press (Machine)",smithinc:"Smith Machine Incline Press",neutralinc:"Neutral-Grip Incline Dumbbell Press",flatdb:"Flat Dumbbell Bench Press",
+  csrow:"Chest-Supported Dumbbell Row (Incline Bench)",csmachine:"Chest-Supported Row (Machine)",csmachinewide:"Chest-Supported Row, Wide Grip (Machine)",tbarcs:"Chest-Supported T-Bar Row",
+  pullup:"Pull-Up",chinup:"Chin-Up",neutralpull:"Neutral-Grip Pull-Up",assistpull:"Assisted Pull-Up Machine",bandpull:"Band-Assisted Pull-Up",latwide:"Wide-Grip Lat Pulldown",
+  dips:"Dip (Parallel Bars)",dipmachine:"Seated Dip Machine",dipassist:"Assisted Dip",closepush:"Close-Grip Push-Up",
+  cossack:"Cossack Squat",cossacksupport:"Supported Cossack Squat",latlunge:"Lateral Lunge",sumogoblet:"Dumbbell Sumo Squat",
+  facepull:"Face Pull",revpec:"Reverse Pec Deck (Rear Delt Machine)",revdb:"Chest-Supported Dumbbell Reverse Fly",bandapart:"Band Pull-Apart",
+  pallof:"Pallof Press",pallofkneel:"Half-Kneeling Pallof Press",pallofhold:"Pallof Press (3 s Hold)",deadbug:"Dead Bug",birddog:"Bird Dog",
+  rdl:"Dumbbell Romanian Deadlift",rdlbb:"Barbell Romanian Deadlift",hyper45:"45° Back Extension (Roman Chair)",legcurl:"Lying Leg Curl (Machine)",slrdl:"Single-Leg Romanian Deadlift",
+  ohp:"Dumbbell Overhead Press",ohpseated:"Seated Dumbbell Shoulder Press (Back Support)",ohpmachine:"Shoulder Press Machine",landmine:"Single-Arm Landmine Press",
+  pulldown:"Neutral-Grip Lat Pulldown",pdwide:"Wide Overhand-Grip Lat Pulldown",pdunder:"Underhand-Grip Lat Pulldown",pd1arm:"Single-Arm Lat Pulldown (Cable)",straightarm:"Straight-Arm Pulldown",
+  split:"Bulgarian Split Squat",revlunge:"Dumbbell Reverse Lunge",stepup:"Dumbbell Step-Up",walklunge:"Dumbbell Walking Lunge",smithsplit:"Smith Machine Bulgarian Split Squat",
+  pushup:"Push-Up",inclinepush:"Incline Push-Up (Hands Elevated)",chestpress:"Chest Press Machine",
+  dbrow:"One-Arm Dumbbell Row",dbrowinc:"Chest-Supported One-Arm Dumbbell Row",rowmachine1:"Single-Arm Row Machine",invrow:"Inverted Row (Australian Pull-Up)",
+  lateral:"Dumbbell Lateral Raise",cablelat:"Cable Lateral Raise",machinelat:"Lateral Raise Machine",lyinglat:"Side-Lying Lateral Raise",
+  sideplank:"Side Plank",sideplankknee:"Side Plank (Knees Bent)",sideplanklift:"Side Plank with Leg Lift",copenhagen:"Copenhagen Plank",
+  bbbench:"Barbell Bench Press",bbincline:"Incline Barbell Bench Press",smithflat:"Smith Machine Bench Press",dbflyflat:"Flat Dumbbell Fly",dbflyinc:"Incline Dumbbell Fly",
+  pecdeck:"Pec Deck (Machine Fly)",cablefly:"Cable Crossover (Cable Fly)",lowcablefly:"Low-to-High Cable Fly",floorpress:"Dumbbell Floor Press",pushupfeet:"Decline Push-Up (Feet Elevated)",dbpullover:"Dumbbell Pullover",
+  bbrow:"Bent-Over Barbell Row",cablerow:"Seated Cable Row",cablerow1:"Single-Arm Cable Row",deadlift:"Barbell Deadlift",trapbar:"Trap Bar (Hex Bar) Deadlift",sumodl:"Sumo Deadlift",
+  goodmorning:"Barbell Good Morning",shrug:"Dumbbell Shrug",scapulapull:"Scapular Pull-Up",hang:"Dead Hang",superman:"Superman (Prone Back Extension)",kbswing:"Kettlebell Swing",
+  bbohp:"Standing Barbell Overhead Press",arnold:"Arnold Press",frontraise:"Dumbbell Front Raise",reardelt:"Bent-Over Dumbbell Reverse Fly",cablerear:"Cable Reverse Fly (Crossover)",extrot:"Cable External Rotation",yraise:"Incline Bench Y-Raise",
+  dbcurl:"Standing Dumbbell Curl",hammer:"Hammer Curl",inclinecurl:"Incline Dumbbell Curl",ezcurl:"EZ-Bar Curl",cablecurl:"Low Cable Curl",preacher:"Preacher Curl (Machine)",
+  pushdown:"Triceps Pushdown (Cable)",ohtri:"Overhead Cable Triceps Extension",skull:"Lying Triceps Extension (Skullcrusher)",dbohtri:"Overhead Dumbbell Triceps Extension",closebench:"Close-Grip Bench Press",kickback:"Dumbbell Triceps Kickback",benchdip:"Bench Dip",diamond:"Diamond Push-Up",
+  backsquat:"Barbell Back Squat",frontsquat:"Barbell Front Squat",legext:"Leg Extension (Machine)",splitsq:"Dumbbell Split Squat",boxpistol:"Box Pistol Squat (Single-Leg Box Squat)",bwsquat:"Bodyweight Squat",
+  seatedcurl:"Seated Leg Curl (Machine)",nordic:"Nordic Hamstring Curl",slidecurl:"Slider Leg Curl",
+  hipthrust:"Barbell Hip Thrust",hipthrustdb:"Dumbbell Hip Thrust",glutebridge:"Glute Bridge",slbridge:"Single-Leg Glute Bridge",cablekick:"Cable Glute Kickback",abductionm:"Hip Abduction Machine",cablehipabd:"Cable Hip Abduction",sidelegraise:"Side-Lying Leg Raise",
+  standcalf:"Standing Calf Raise (Machine/Smith)",seatedcalf:"Seated Calf Raise",presscalf:"Leg Press Calf Raise",dbcalf:"Single-Leg Dumbbell Calf Raise",tibraise:"Tibialis Raise",
+  plank:"Plank",hollow:"Hollow Hold",hangleg:"Hanging Leg Raise",hangknee:"Hanging Knee Raise",cablecrunch:"Cable Crunch",abwheel:"Ab Wheel Rollout",russian:"Russian Twist",woodchop:"Cable Wood Chop",crunch:"Crunch",revcrunch:"Reverse Crunch",
+  hips9090:"90/90 Hip Switches",hold9090:"90/90 Hip Stretch",hipflexor:"Kneeling Hip Flexor Stretch",couch:"Couch Stretch",deepsquat:"Deep Squat Hold",wgs:"World's Greatest Stretch",catcow:"Cat-Cow",openbook:"Open Book (Thoracic Rotation)",
+  pigeon:"Pigeon Pose",lizard:"Lizard Lunge",adductrock:"Adductor Rock-Back",frog:"Frog Stretch",anklemob:"Ankle Mobilization (Knee-to-Wall)",hipcars:"Hip CARs (Controlled Articular Rotations)",
+  shoulderpass:"Shoulder Dislocates (Band or Stick)",thoracicroll:"Thoracic Foam Roll",hamstretch:"Supine Hamstring Stretch (Strap)",
+  declinepressm:"Decline Chest Press (Machine)",isochest:"Iso-Lateral Chest Press (Hammer Strength)",highrowm:"High Row Machine",lowrowm:"Low Row Machine",isorow:"Iso-Lateral Row (Hammer Strength)",
+  latmachine:"Lat Pulldown Machine",pulloverm:"Pullover Machine",backextm:"Back Extension Machine (Lumbar Extension)",shrugm:"Shrug Machine",revhypm:"Reverse Hyperextension Machine",ghd:"Glute-Ham Raise (GHD)",
+  isoshoulder:"Iso-Lateral Shoulder Press",smithohp:"Smith Machine Shoulder Press",bicepsm:"Biceps Curl Machine",tricepsm:"Triceps Extension Machine",
+  legpresshoriz:"Seated Leg Press (Horizontal)",singlelegpress:"Single-Leg Leg Press",pendulum:"Pendulum Squat",vsquat:"V-Squat Machine",beltsquat:"Belt Squat",standcurl:"Standing Leg Curl",
+  hipadductm:"Hip Adduction Machine (Inner Thigh)",glutekickm:"Glute Kickback Machine",hipthrustm:"Hip Thrust Machine (Glute Drive)",donkeycalf:"Donkey Calf Raise",
+  smithrow:"Smith Machine Row",smithhip:"Smith Machine Hip Thrust",smithlunge:"Smith Machine Lunge",smithrdl:"Smith Machine Romanian Deadlift",
+  pullthrough:"Cable Pull-Through",cablechest:"Standing Cable Chest Press",cableadd:"Cable Hip Adduction",ropehammer:"Rope Hammer Curl",
+  abcrunchm:"Ab Crunch Machine",torsorot:"Rotary Torso Machine",captain:"Captain's Chair Leg Raise",
+  treadmill:"Treadmill",bikeup:"Stationary Bike (Upright)",bikerec:"Recumbent Bike",airbike:"Air Bike (Assault Bike)",elliptical:"Elliptical Cross Trainer",rowerg:"Rowing Machine (Ergometer)",stairs:"Stair Climber (StairMaster)",skierg:"SkiErg"
+};
 
 /* ---- scalanie z EX (plan.js) ---- */
 Object.keys(META).forEach(id=>{const e=EX[id];if(!e)return;const m=META[id];e.g=m[0].split(",");e.eq=m[1];e.alias=m[2]||""});
@@ -245,3 +338,4 @@ LIB.forEach(l=>{
     g:l.g,eq:l.eq,alias:l.alias,lib:true};
   ORDER[l.id]=Object.keys(ORDER).length;
 });
+Object.keys(EX).forEach(id=>{EX[id].en=EN[id]||""});

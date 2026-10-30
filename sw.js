@@ -1,5 +1,5 @@
 /* Service worker: działanie offline (strategia: z pamięci podręcznej, a w tle aktualizacja). */
-const CACHE="trening-v3";
+const CACHE="trening-v4";
 const ASSETS=["./","./index.html","./styles.css","./plan.js","./cwiczenia.js","./app.js","./manifest.webmanifest","./icons/icon-192.png","./icons/icon-512.png","./icons/icon-maskable-512.png","./icons/apple-touch-icon.png"];
 self.addEventListener("install",e=>{
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()));

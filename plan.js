@@ -26,7 +26,8 @@ const SLOTS=[
  alts:[
   V("incmachine","Wyciskanie na maszynie skośnej","Ustaw siedzisko tak, by uchwyty były na wysokości górnej części klatki, łopatki ściągnięte.","Ten sam wzorzec na stabilnej maszynie, bez asekuracji."),
   V("smithinc","Wyciskanie na suwnicy Smitha na skosie","Ławka 30°, sztanga schodzi do górnej części klatki, łokcie ok. 45° od tułowia.","Prowadzona sztanga na skosie, łatwo dobrać ciężar."),
-  V("neutralinc","Wyciskanie hantli na skosie chwytem neutralnym","Hantle równolegle do siebie, łokcie blisko tułowia, łopatki ściągnięte.","Chwyt równoległy bywa wygodniejszy dla barków.")
+  V("neutralinc","Wyciskanie hantli na skosie chwytem neutralnym","Hantle równolegle do siebie, łokcie blisko tułowia, łopatki ściągnięte.","Chwyt równoległy bywa wygodniejszy dla barków."),
+  V("flatdb","Wyciskanie hantli na płaskiej ławce","Łopatki ściągnięte, łokcie ok. 45° od tułowia, hantle opuszczaj do poziomu klatki.","Klasyczne pchanie poziome z hantlami, większy nacisk na środkową część klatki. Dobre do rotacji ze skosem co tydzień (opcja „Rotacja co tydzień” na dole tego ekranu).")
  ]},
 {id:"csrow",w:"A",name:"Wiosłowanie w podporze (ławka skośna)",sets:3,lo:8,hi:12,rest:90,
  cue:"Klatka oparta o ławkę 30–45°, hantle do bioder, łopatki ściągnięte na końcu ruchu. Odciąża lędźwia.",
@@ -110,9 +111,7 @@ const SLOTS=[
  cue:"Ciało w jednej linii. Przy łatwych pompkach dodaj obciążenie lub zwolnij tempo.",
  alts:[
   V("inclinepush","Pompki z rękami na podwyższeniu","Dłonie na ławce lub drążku, ciało w jednej linii.","Łatwiejsza wersja, gdy brakuje siły."),
-  V("chestpress","Wyciskanie na maszynie (chest press)","Uchwyty na wysokości środka klatki, łopatki ściągnięte.","Pchanie poziome z dobieranym ciężarem, dobre, gdy pompki są za łatwe lub za trudne.",{bw:false}),
-  V("flatdb","Wyciskanie hantli na płaskiej ławce","Łopatki ściągnięte, łokcie ok. 45° od tułowia.","Klasyczne pchanie poziome z hantlami, większy nacisk na środkową część klatki.",{bw:false})
- ]},
+  V("chestpress","Wyciskanie na maszynie (chest press)","Uchwyty na wysokości środka klatki, łopatki ściągnięte.","Pchanie poziome z dobieranym ciężarem, dobre, gdy pompki są za łatwe lub za trudne.",{bw:false}) ]},
 {id:"dbrow",w:"B",name:"Wiosłowanie hantlem jednorącz",sets:3,lo:8,hi:12,rest:75,side:true,
  cue:"Hantla do biodra, tułów stabilny.",
  alts:[

@@ -1,18 +1,22 @@
 # Dziennik treningowy
 
-Prosta aplikacja na telefon do zapisywania treningów siłowych 2 razy w tygodniu (plan A/B).
+Prosta aplikacja na telefon do zapisywania treningów siłowych. Ćwiczenia wybierasz swobodnie z biblioteki (ponad 160 pozycji) albo korzystasz z gotowych szablonów A i B.
 Działa w przeglądarce, bez konta i bez serwera. **Wszystkie dane zostają na Twoim urządzeniu.**
 
 ## Co potrafi
 
-- **Trening.** Ćwiczenia wybierasz w dowolnej kolejności. Serie wpisujesz przyciskami − / + lub z klawiatury, a ciężar i powtórzenia podpowiadają się z poprzedniego treningu. Po każdej serii rusza stoper przerwy. Przycisk „Zakończ” pokazuje podsumowanie dnia z porównaniem do poprzedniego razu.
-- **Zamienniki ćwiczeń.** Plan jest sztywny (16 miejsc: 8 w treningu A i 8 w treningu B), ale każde ćwiczenie możesz zamienić na inne z listy o tym samym wzorcu ruchu, np. przysiad goblet na leg press. Serie i przerwa zostają z planu.
+- **Biblioteka ćwiczeń.** Na ekranie Trening dodajesz ćwiczenia do listy na dany dzień (przycisk Dodaj ćwiczenie). Biblioteka ma wyszukiwarkę (działa też bez polskich znaków i po angielskich nazwach, np. „hip thrust”), filtry według partii mięśniowej i sprzętu, ulubione (★) i listę ostatnio robionych. Obejmuje klatkę, plecy, barki, biceps, triceps, nogi, pośladki, łydki, core oraz mobilność bioder, barków i klatki piersiowej.
+- **Własne ćwiczenia.** Brakuje czegoś? W bibliotece wybierz „Dodaj własne ćwiczenie”: nazwa, partia, sprzęt i sposób zapisu serii (z ciężarem, z masą ciała, same powtórzenia albo czas).
+- **Trening.** Ćwiczenia wykonujesz w dowolnej kolejności. Serie wpisujesz przyciskami − / + lub z klawiatury, a ciężar i powtórzenia podpowiadają się z poprzedniego treningu. Po każdej serii rusza stoper przerwy. Przycisk „Zakończ” pokazuje podsumowanie dnia z porównaniem do poprzedniego razu.
+- **Zamiana ćwiczenia w trakcie.** W oknie ćwiczenia przycisk „Zamień na inne ćwiczenie” otwiera bibliotekę. Ćwiczenie bez zapisanych serii zostaje podmienione, a to z seriami zostaje w historii dnia.
+- **Szablony A i B.** Gotowe listy po 8 ćwiczeń (przyciski Szablon A i Szablon B). Ćwiczenia w szablonie zmienisz w zakładce Więcej, tam też ustawisz rotację.
+- **Rotacja co tydzień.** W zakładce Więcej, w szablonie, możesz ustawić, że w jednym tygodniu robisz np. wyciskanie na skosie, a w następnym na płaskiej ławce, i tak na przemian. Aplikacja sama pokazuje właściwe ćwiczenie według tygodnia (poniedziałek–niedziela). Historia każdego ćwiczenia zapisuje się osobno.
 - **Historia.** Lista dni z szczegółami i usuwaniem.
-- **Wykresy.** Wybierasz ćwiczenie i widzisz zmianę powtórzeń oraz ciężaru (▲ wzrost, ▼ spadek) względem poprzedniej sesji i startu. Do tego frekwencja: słupki tygodniowe z celem 2, wykonanie planu i serie tygodni.
+- **Wykresy.** Wybierasz ćwiczenie (lista pogrupowana według partii, tylko ćwiczenia z historią) i widzisz zmianę powtórzeń oraz ciężaru (▲ wzrost, ▼ spadek) względem poprzedniej sesji i startu. Do tego frekwencja: słupki tygodniowe z celem 2, wykonanie planu i serie tygodni.
 - **Kopia zapasowa.** Eksport i import danych (JSON), eksport do arkusza (CSV).
 - **Offline.** Po pierwszym otwarciu działa bez internetu.
 
-## Plan
+## Szablony A i B
 
 | Trening A | Trening B |
 |---|---|
@@ -56,11 +60,32 @@ Zrób to od razu: Safari usuwa dane stron, z którymi nie wchodziłeś w interak
 
 - Dane trzymane są w `localStorage` przeglądarki pod kluczem `trening.v1`. Nic nie jest wysyłane na żaden serwer.
 - Wyczyszczenie danych przeglądarki, zmiana telefonu lub odinstalowanie aplikacji z ekranu początkowego usuwa dane. Dlatego robisz kopie zapasowe.
-- Import dopisuje treningi z kopii. Jeśli dzień o tej samej dacie już istnieje, zostaje zastąpiony.
+- Import dopisuje treningi, własne ćwiczenia, ulubione i ustawienia szablonów z kopii. Jeśli dzień o tej samej dacie już istnieje, zostaje zastąpiony.
 
-## Zamienniki ćwiczeń: na czym się opierają
+## Aktualizacja bez utraty danych
 
-Zamienniki dobrano według wzorca ruchu i pracujących mięśni, z uwzględnieniem wersji łagodniejszych dla lędźwi i barków. To propozycja autora, a nie wynik badań nad każdą parą ćwiczeń. Wsparcie literaturowe dla części wyborów:
+Dane siedzą w przeglądarce telefonu, a nie w plikach aplikacji, więc podmiana plików w repozytorium ich nie rusza. Warunek: **adres strony musi zostać taki sam** (inna domena lub inna nazwa repozytorium to dla przeglądarki inna aplikacja z pustymi danymi).
+
+1. Zrób kopię: Więcej → Eksportuj dane.
+2. Wgraj nowe pliki do tego samego repozytorium (nadpisz stare). Od wersji 2.0 dochodzi nowy plik `cwiczenia.js`, a zmieniają się też `index.html` i `styles.css`, więc wgraj całą zawartość folderu.
+3. Na telefonie otwórz aplikację, zamknij ją całkiem i otwórz jeszcze raz. Za pierwszym razem może się pokazać stara wersja, bo aplikacja najpierw pobiera nową w tle. Numer wersji jest na dole zakładki Więcej.
+
+Format danych (`trening.v1`) jest zgodny wstecz: nowe wersje czytają stare dane, a ustawienia z wcześniejszych wersji są przenoszone automatycznie.
+
+## Historia wersji
+
+- **2.0.0** – biblioteka ćwiczeń (164 pozycje) z wyszukiwarką, filtrami, ulubionymi i własnymi ćwiczeniami, swobodna lista ćwiczeń na dzień, plan A/B jako szablony, wykresy dla każdego ćwiczenia z historią, nowa kolumna „grupa” w eksporcie CSV. Dane z wersji 1.x działają bez zmian.
+- **1.1.0** – płaska ławka jest zamiennikiem wyciskania na skosie (trening A), rotacja ćwiczeń co tydzień, rotacja zapisywana w kopii zapasowej. Dawny wybór „płaska ławka zamiast pompek” przenosi się automatycznie na miejsce skosu.
+- **1.0.0** – pierwsza wersja.
+
+## Biblioteka i zamienniki: na czym się opierają
+
+Domyślne serie i zakresy powtórzeń w bibliotece to propozycje startowe: ćwiczenia wielostawowe 6–10 lub 8–12 powtórzeń, izolacje 10–20. Przyrost mięśni jest podobny w szerokim zakresie obciążeń, o ile serie kończą się blisko granicy możliwości, a tygodniowa liczba serii na partię (kilka do kilkunastu) ma większe znaczenie niż pojedyncza seria:
+
+- Schoenfeld BJ, Grgic J, Ogborn D, Krieger JW (2017), *J Strength Cond Res*. Adaptacje siły i hipertrofii przy niskich i wysokich obciążeniach (przegląd systematyczny z metaanalizą).
+- Schoenfeld BJ, Ogborn D, Krieger JW (2017), *J Sports Sci*. Zależność między tygodniową objętością treningu a przyrostem masy mięśniowej (metaanaliza).
+
+Zamienniki w szablonach dobrano według wzorca ruchu i pracujących mięśni, z uwzględnieniem wersji łagodniejszych dla lędźwi i barków. To propozycja autora, a nie wynik badań nad każdą parą ćwiczeń. Wsparcie literaturowe dla części wyborów:
 
 - Youdas JW i wsp. (2010), *J Strength Cond Res* 24(12): 3404–3414. Aktywność mięśni w podciąganiu nachwytem i podchwytem.
 - Porównanie aktywności czworogłowego w przysiadzie i leg pressie: *Front Sports Act Living* (2021), doi:10.3389/fspor.2021.686335.
@@ -74,11 +99,22 @@ Historia każdego ćwiczenia jest liczona osobno, więc po zamianie wykresy zacz
 |---|---|
 | `index.html` | strona |
 | `styles.css` | wygląd |
-| `plan.js` | plan i lista zamienników (tutaj dodasz własne ćwiczenia) |
+| `plan.js` | szablony A i B oraz lista zamienników dla każdego miejsca |
+| `cwiczenia.js` | biblioteka ćwiczeń: grupy, sprzęt, wskazówki, domyślne serie |
 | `app.js` | logika aplikacji |
 | `sw.js`, `manifest.webmanifest`, `icons/` | tryb offline i instalacja na telefonie |
 
-### Własne zamienniki
+### Dodawanie ćwiczeń do biblioteki
+
+Pojedyncze ćwiczenie dodasz w samej aplikacji (Dodaj własne ćwiczenie). Na stałe, dla wszystkich, dopisz wiersz w `cwiczenia.js`:
+
+```js
+X("moj_id","Nazwa ćwiczenia","chest,triceps","db","M","Wskazówka techniczna","aliasy do wyszukiwania",{side:true})
+```
+
+Grupy: `chest, back, shoulders, biceps, triceps, quads, hams, glutes, calves, core, mobility` (pierwsza jest główną). Sprzęt: `bw, db, bb, ma, ca, ot`. Typ (`C, M, I, L, B, T, H, N`) ustawia domyślne serie i zakres powtórzeń, opis typów jest na górze pliku. Ostatni argument jest opcjonalny.
+
+### Własne zamienniki w szablonie
 
 W `plan.js` do tablicy `alts` wybranego miejsca w planie dodaj wpis:
 
